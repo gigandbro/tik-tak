@@ -36,11 +36,24 @@
     </div>
     
     <script>
-        const username = localStorage.getItem("username");
+        const urlParams = new URLSearchParams(window.location.search);
+        const invitedPlayer = urlParams.get("player");
+        let username = localStorage.getItem("username");
+        let playerSymbol = "";
+        
         if (username) {
             document.getElementById("register").classList.add("hidden");
             document.getElementById("profile").classList.remove("hidden");
             document.getElementById("userDisplay").innerText = username;
+        }
+
+        if (invitedPlayer && username && invitedPlayer !== username) {
+            document.getElementById("profile").classList.add("hidden");
+            document.getElementById("game").classList.remove("hidden");
+            playerSymbol = "O";
+            startTicTacToe("O");
+        } else if (!invitedPlayer && username) {
+            playerSymbol = "X";
         }
 
         function register() {
@@ -55,6 +68,30 @@
             const link = `${window.location.origin}${window.location.pathname}?player=${username}`;
             document.getElementById("gameLink").innerText = `Share this link to play: ${link}`;
             document.getElementById("gameLink").classList.remove("hidden");
+        }
+
+        function startTicTacToe(symbol) {
+            const board = document.getElementById("board");
+            const status = document.getElementById("status");
+            let cells = ["", "", "", "", "", "", "", "", ""];
+            let currentPlayer = "X";
+
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.dataset.index = i;
+                cell.addEventListener("click", () => makeMove(i, cell));
+                board.appendChild(cell);
+            }
+
+            function makeMove(index, cell) {
+                if (cells[index] === "" && currentPlayer === symbol) {
+                    cells[index] = currentPlayer;
+                    cell.innerText = currentPlayer;
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                    status.innerText = `Player ${currentPlayer}'s turn`;
+                }
+            }
         }
     </script>
 </body>
