@@ -38,12 +38,12 @@
     
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const invitedPlayer = urlParams.get("player");
         let username = localStorage.getItem("username");
         let playerSymbol = "";
         let currentTurn = "X";
         let cells = ["", "", "", "", "", "", "", "", ""];
-        let gameStarted = false;
+        let gameReady = false;
+        let gameId = urlParams.get("game");
         
         if (username) {
             document.getElementById("register").classList.add("hidden");
@@ -60,36 +60,37 @@
         }
 
         function generateGameLink() {
-            const link = `${window.location.origin}${window.location.pathname}?player=${username}`;
+            gameId = Math.random().toString(36).substr(2, 9);
+            const link = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
             document.getElementById("gameLink").innerText = `Share this link to play: ${link}`;
             document.getElementById("gameLink").classList.remove("hidden");
             document.getElementById("waitingMessage").classList.remove("hidden");
-            checkForOpponent(link);
+            waitForOpponent();
         }
 
-        function checkForOpponent(link) {
+        function waitForOpponent() {
             const checkInterval = setInterval(() => {
-                if (gameStarted) {
+                if (gameReady) {
                     clearInterval(checkInterval);
-                    document.getElementById("profile").classList.add("hidden");
-                    document.getElementById("game").classList.remove("hidden");
-                    playerSymbol = "X";
-                    startTicTacToe();
+                    startGame();
                 }
             }, 1000);
         }
 
-        if (invitedPlayer && username && invitedPlayer !== username) {
-            gameStarted = true;
+        function startGame() {
             document.getElementById("profile").classList.add("hidden");
             document.getElementById("game").classList.remove("hidden");
-            playerSymbol = "O";
+            playerSymbol = (username === gameId) ? "X" : "O";
             startTicTacToe();
+        }
+
+        if (gameId) {
+            gameReady = true;
+            startGame();
         }
 
         function startTicTacToe() {
             const board = document.getElementById("board");
-            const status = document.getElementById("status");
             board.innerHTML = "";
             
             for (let i = 0; i < 9; i++) {
