@@ -25,8 +25,9 @@
     
     <div id="profile" class="container hidden">
         <h2>Welcome, <span id="userDisplay"></span></h2>
-        <button onclick="startGame()">Generate Game Link</button>
+        <button onclick="generateGameLink()">Generate Game Link</button>
         <p id="gameLink" class="hidden"></p>
+        <p id="waitingMessage" class="hidden">Waiting for opponent to join...</p>
     </div>
     
     <div id="game" class="container hidden">
@@ -42,6 +43,7 @@
         let playerSymbol = "";
         let currentTurn = "X";
         let cells = ["", "", "", "", "", "", "", "", ""];
+        let gameStarted = false;
         
         if (username) {
             document.getElementById("register").classList.add("hidden");
@@ -57,17 +59,28 @@
             }
         }
 
-        function startGame() {
+        function generateGameLink() {
             const link = `${window.location.origin}${window.location.pathname}?player=${username}`;
             document.getElementById("gameLink").innerText = `Share this link to play: ${link}`;
             document.getElementById("gameLink").classList.remove("hidden");
-            document.getElementById("profile").classList.add("hidden");
-            document.getElementById("game").classList.remove("hidden");
-            playerSymbol = "X";
-            startTicTacToe();
+            document.getElementById("waitingMessage").classList.remove("hidden");
+            checkForOpponent(link);
+        }
+
+        function checkForOpponent(link) {
+            const checkInterval = setInterval(() => {
+                if (gameStarted) {
+                    clearInterval(checkInterval);
+                    document.getElementById("profile").classList.add("hidden");
+                    document.getElementById("game").classList.remove("hidden");
+                    playerSymbol = "X";
+                    startTicTacToe();
+                }
+            }, 1000);
         }
 
         if (invitedPlayer && username && invitedPlayer !== username) {
+            gameStarted = true;
             document.getElementById("profile").classList.add("hidden");
             document.getElementById("game").classList.remove("hidden");
             playerSymbol = "O";
@@ -104,4 +117,5 @@
     </script>
 </body>
 </html>
+
 
