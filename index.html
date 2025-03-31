@@ -49,15 +49,6 @@
             document.getElementById("userDisplay").innerText = username;
         }
 
-        if (invitedPlayer && username && invitedPlayer !== username) {
-            document.getElementById("profile").classList.add("hidden");
-            document.getElementById("game").classList.remove("hidden");
-            playerSymbol = "O";
-            startTicTacToe();
-        } else if (!invitedPlayer && username) {
-            playerSymbol = "X";
-        }
-
         function register() {
             const user = document.getElementById("username").value;
             if (user) {
@@ -72,6 +63,14 @@
             document.getElementById("gameLink").classList.remove("hidden");
             document.getElementById("profile").classList.add("hidden");
             document.getElementById("game").classList.remove("hidden");
+            playerSymbol = "X";
+            startTicTacToe();
+        }
+
+        if (invitedPlayer && username && invitedPlayer !== username) {
+            document.getElementById("profile").classList.add("hidden");
+            document.getElementById("game").classList.remove("hidden");
+            playerSymbol = "O";
             startTicTacToe();
         }
 
@@ -105,3 +104,4 @@
     </script>
 </body>
 </html>
+
